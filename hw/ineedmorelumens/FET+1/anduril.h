@@ -5,9 +5,6 @@
 
 #include "ineedmorelumens/FET+1/hwdef.h"
 
-#undef VOLTAGE_FUDGE_FACTOR
-#define VOLTAGE_FUDGE_FACTOR 0  // add 0V because this driver is using a PFET not a Diode so there's virtually No Voltage Drop
-
 #define RAMP_SIZE 150
 
 #if 0  // 2022 version
@@ -32,19 +29,19 @@
 #define PWM_TOPS     4095,2701,3200,3586,2518,2778,2834,2795,2705,2587,2455,2582,2412,2247,2256,2091,2062,1907,1860,1802,1737,1605,1542,1477,1412,1347,1284,1222,1162,1105,1050,997,946,898,853,810,768,730,693,658,625,594,564,536,503,485,462,439,418,398,384,366,353,340,327,319,307,298,292,284,280,273,269,266,263,260,258,256,256,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
 
 #define MAX_1x7135           75
-#define DEFAULT_LEVEL        75
-#define MIN_THERM_STEPDOWN   60
+#define DEFAULT_LEVEL        MAX_1x7135
+#define MIN_THERM_STEPDOWN   MAX_1x7135
+
 #define HALFSPEED_LEVEL      20
 #define QUARTERSPEED_LEVEL   5
 
 #define RAMP_SMOOTH_FLOOR    1
-#define RAMP_SMOOTH_CEIL     100
-// 20 38 56 [75] 93 111 130
+#define RAMP_SMOOTH_CEIL     120
+
 #define RAMP_DISCRETE_FLOOR  20
 #define RAMP_DISCRETE_CEIL   RAMP_SMOOTH_CEIL
 #define RAMP_DISCRETE_STEPS  7
 
-// 25 50 [75] 100 125
 #define SIMPLE_UI_FLOOR  25
 #define SIMPLE_UI_CEIL   100
 #define SIMPLE_UI_STEPS  5
@@ -73,26 +70,30 @@
 #define POLICE_COLOR_STROBE_CH1        CM_AUXRED
 #define POLICE_COLOR_STROBE_CH2        CM_AUXBLU
 
+
+#undef VOLTAGE_FUDGE_FACTOR
+#define VOLTAGE_FUDGE_FACTOR 0  // add 0V, because this driver is using a PFET not a Diode so there's virtually No Voltage Drop
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 //INeedMoreLumens
 
-//disable Simple UI by default
-#define SIMPLE_UI_ACTIVE 0
+#define USE_EXTENDED_SIMPLE_UI // allow Aux Config and Strobe Modes in Simple UI
+#define USE_SIMPLE_UI_RAMPING_TOGGLE // Allow 3C in Simple UI for switching between smooth and stepped ramping
+#define SIMPLE_UI_ACTIVE 0 //disable Simple UI by default
 
 #define RGB_LED_OFF_DEFAULT 0x27 //0x27=High Disco
 #define RGB_LED_LOCKOUT_DEFAULT 0x20 //0x20=High Red
-#define DEFAULT_RAMP_SPEED 1 // 3 = 1/3, 4 = 1/4
 /*
  0 = Off
  1 = Low
  2 = High
  3 = Blink
 
- * 0: R
- * 1: RG  = Orange
- * 2:  G
+ * 0: R   = Red
+ * 1: RG  = Amber/Orange
+ * 2:  G  = Green
  * 3:  GB = Cyan
- * 4:   B
+ * 4:   B = Blue
  * 5: R B = Purple
  * 6: RGB = White
  * 7: disco
@@ -100,9 +101,28 @@
  * 9: voltage
  */
 
+//// enable SOS in the blinkies group
+//#define USE_SOS_MODE
+//#define USE_SOS_MODE_IN_BLINKY_GROUP
+
+// enable factory reset on 13H without loosening tailcap
+// not really needed but doesn't hurt
+#define USE_SOFT_FACTORY_RESET
+
+// temperature limit
+#undef DEFAULT_THERM_CEIL
+#define DEFAULT_THERM_CEIL 50
+
+//#define USE_INDICATOR_LED_WHILE_RAMPING //turn on the aux LEDs while main LEDs are on
+
+//// don't turn on the aux LEDs while main LEDs are on
+//#ifdef USE_INDICATOR_LED_WHILE_RAMPING
+//#undef USE_INDICATOR_LED_WHILE_RAMPING
+//#endif
+
 // turn on and set Manual Memory
-#define DEFAULT_AUTOLOCK_TIME 0
-#define DEFAULT_MANUAL_MEMORY DEFAULT_LEVEL
+#define DEFAULT_AUTOLOCK_TIME 0 //Disabled
+#define DEFAULT_MANUAL_MEMORY DEFAULT_LEVEL //Currently MAX_1x7135
 #define DEFAULT_MANUAL_MEMORY_TIMER DEFAULT_AUTOLOCK_TIME
 
 #define DEFAULT_2C_STYLE 1
@@ -110,8 +130,7 @@
 // 1 = A1 style: Off 2C = ceil, On 2C = turbo
 // 2 = A2 style: Off 2C = ceil, On 2C = ceil, Ramped ceil 2C = turbo
 
-// disable Post Off Voltage
-#define DEFAULT_POST_OFF_VOLTAGE_SECONDS 0
+#define DEFAULT_POST_OFF_VOLTAGE_SECONDS 0 // disable Post Off Voltage
 
 // don't blink mid-ramp
 #ifdef BLINK_AT_RAMP_MIDDLE
@@ -122,6 +141,8 @@
 #ifdef BLINK_AT_RAMP_CEIL
 #undef BLINK_AT_RAMP_CEIL
 #endif
+
+//#define DEFAULT_RAMP_SPEED 1 // 3 = 1/3, 4 = 1/4
 
 //// disable extra digit on battcheck
 //#ifdef USE_EXTRA_BATTCHECK_DIGIT

@@ -1,5 +1,5 @@
-// Wurkkos TS25 driver layout
-// Copyright (C) 2022-2026 gchart, Selene ToyKeeper
+// INeedMoreLumens FET+1 driver layout
+// Copyright (C) 2022-2026 INeedMoreLumens, gchart, Selene ToyKeeper
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 
@@ -64,11 +64,6 @@ enum channel_modes_e {
 #define SWITCH_VECT     PORTA_PORT_vect
 #define SWITCH_INTFLG   VPORTA.INTFLAGS
 
-// average drop across diode on this hardware
-#ifndef VOLTAGE_FUDGE_FACTOR
-#define VOLTAGE_FUDGE_FACTOR 7  // add 0.35V
-#endif
-
 // this light has RGB aux LEDs
 #define USE_AUXRGB_LEDS
 
@@ -89,12 +84,12 @@ inline void hwdef_setup() {
 
     //VPORTA.DIR = ...;
     // Outputs: PWMs
-    VPORTB.DIR = PIN0_bm
-               | PIN1_bm;
+    VPORTB.DIR = PIN0_bm  //FET
+               | PIN1_bm; //7135
     // RGB aux LEDs
-    VPORTC.DIR = PIN1_bm
-               | PIN2_bm
-               | PIN3_bm;
+    VPORTC.DIR = PIN1_bm  //Blue Aux
+               | PIN2_bm  //Red Aux
+               | PIN3_bm; //Green Aux
 
     // enable pullups on the unused pins to reduce power
     PORTA.PIN0CTRL = PORT_PULLUPEN_bm;
@@ -114,9 +109,9 @@ inline void hwdef_setup() {
     PORTB.PIN5CTRL = PORT_PULLUPEN_bm;
 
     PORTC.PIN0CTRL = PORT_PULLUPEN_bm;
-    //PORTC.PIN1CTRL = PORT_PULLUPEN_bm; // RGB Aux
-    //PORTC.PIN2CTRL = PORT_PULLUPEN_bm; // RGB Aux
-    //PORTC.PIN3CTRL = PORT_PULLUPEN_bm; // RGB Aux
+    //PORTC.PIN1CTRL = PORT_PULLUPEN_bm; // Blue Aux
+    //PORTC.PIN2CTRL = PORT_PULLUPEN_bm; // Red Aux
+    //PORTC.PIN3CTRL = PORT_PULLUPEN_bm; // Green Aux
 
     // set up the PWM
     // https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny1614-16-17-DataSheet-DS40002204A.pdf
