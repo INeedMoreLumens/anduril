@@ -5,7 +5,6 @@
 .*.swp
 arch/dfp/
 env/
-hex/
 ignore/
 old/
 releases/
