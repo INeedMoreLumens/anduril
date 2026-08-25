@@ -12,7 +12,6 @@ venv/
 *~
 *.cpp
 *.elf
-*.hex
 *.html
 *.o
 *.old
