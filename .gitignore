@@ -5,6 +5,7 @@
 .*.swp
 arch/dfp/
 env/
+hex/
 ignore/
 old/
 releases/
@@ -12,6 +13,7 @@ venv/
 *~
 *.cpp
 *.elf
+*.hex
 *.html
 *.o
 *.old
