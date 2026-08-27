@@ -108,6 +108,23 @@ RGB_t voltage_to_rgb_t (rgb_uint_t brightness) {
 // mode: 0bPPPPCCCC where PPPP is the pattern and CCCC is the color
 // arg: time slice number
 void rgb_led_update(uint8_t mode, uint16_t arg) {
+
+    #ifdef USE_CHARGING
+	usbc_detect(); // USB-C Cable status
+	if (is_plugged_in)
+	{
+		charging_detect(); // charging status:
+		if (is_charging)
+		{
+			rgb_led_voltage_readout(2);
+			return;
+		} else {//charging_complete
+			set_auxrgb_power(0); //turn off Aux
+			return;
+		}
+	}
+	#endif
+
     static uint8_t rainbow = 0;  // track state of rainbow mode
     static uint8_t frame = 0;  // track state of animation mode
 

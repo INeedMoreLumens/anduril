@@ -292,6 +292,9 @@ void setup() {
 
 }
 
+#ifdef USE_CHARGING
+    static uint16_t tick = 0;
+#endif //USE_CHARGING
 
 // runs repeatedly whenever light is "on" (not in standby)
 void loop() {
@@ -304,6 +307,27 @@ void loop() {
 
     // "current_state" is volatile, so cache it to reduce code size
     StatePtr state = current_state;
+
+    #ifdef USE_CHARGING
+	
+		if (state == steady_state) {
+			if (actual_level > 0) {
+				tick++;
+				if (tick == 100) { // Only run once every 100 ticks
+					tick = 0;
+					usbc_detect();
+						if (is_plugged_in) {
+							charging_detect();
+								if (is_charging) {
+									rgb_led_voltage_readout(actual_level);
+								} else {//charging_complete
+									set_auxrgb_power(0); //turn off Aux
+								}
+						}
+				}
+			}
+		}
+	#endif //USE_CHARGING
 
     if (0) {}  // placeholder
 
